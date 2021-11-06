@@ -2,25 +2,28 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
-contract TestToken is ERC20 {
+contract TestToken is ERC20, Ownable {
 
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allowances;
 
-    uint256 _totalSupply = 100000 * (10**18);
+    // uint256 _totalSupply = 100000 * (10**18);
+    uint256 _totalSupply = 100000;
+    address private _owner;
 
     constructor() ERC20("testToken", "TEST") {
+        _owner = msg.sender;
+        balances[msg.sender] = _totalSupply;
     }
 
-    function mint(address account, uint256 amount) public {
+    function mint(address account, uint256 amount) onlyOwner public {
         require(account != address(0), "ERC20: mint to the zero address");
         _totalSupply += amount;
         balances[account] += amount;
         emit Transfer(address(0), account, amount);
-        console.log(account);
-        console.log(amount);
     }
 
     function totalSupply() public view virtual override returns (uint256) {
@@ -32,33 +35,32 @@ contract TestToken is ERC20 {
     }
 
     function transfer(address receiver, uint numTokens) public override returns (bool) {
-        require(numTokens <= balances[msg.sender]);
+        require(numTokens <= balances[msg.sender], "Number of tokens to be transferred surpass the ones in account");
         balances[msg.sender] = balances[msg.sender] - numTokens;
         balances[receiver] = balances[receiver] + numTokens;
         emit Transfer(msg.sender, receiver, numTokens);
         return true;
     }
 
-    function approve(address delegate, uint numTokens) public override returns (bool) {
-        allowances[msg.sender][delegate] = numTokens;
-        emit Approval(msg.sender, delegate, numTokens);
+    function approve(address sender, uint numTokens) public override returns (bool) {
+        allowances[_owner][sender] = numTokens;
+        emit Approval(_owner, sender, numTokens);
         return true;
     }
 
-    function allowance(address owner, address delegate) public view override returns (uint) {
-        return allowances[owner][delegate];
+    function allowance(address _Owner, address spender) public view override returns (uint) {
+        return allowances[_Owner][spender];
     }
 
-    function transferFrom(address owner, address buyer, uint numTokens) public override returns (bool) { //spender, receiver
-        require(numTokens <= balances[owner],"Number of tokens surpass the tokens in the account");
-        if(owner!=msg.sender){
-        require(numTokens <= allowances[owner][msg.sender],"Number of tokens exceed the number allowed");
-        allowances[owner][msg.sender] = allowances[owner][msg.sender] - numTokens;
+    function transferFrom(address sender, address receiver, uint numTokens) public override returns (bool) { 
+        require(numTokens <= balances[sender],"Number of tokens surpass the tokens in the account");
+        if(sender!=msg.sender){
+        require(numTokens <= allowances[sender][msg.sender],"Number of tokens exceed the number allowed");
+        allowances[sender][msg.sender] = allowances[sender][msg.sender] - numTokens;
         }
-        balances[owner] = balances[owner] - numTokens;
-        balances[buyer] = balances[buyer] + numTokens;
-        emit Transfer(owner, buyer, numTokens);
+        balances[sender] = balances[sender] - numTokens;
+        balances[receiver] = balances[receiver] + numTokens;
+        emit Transfer(sender, receiver, numTokens);
         return true;
     }
- 
 }
