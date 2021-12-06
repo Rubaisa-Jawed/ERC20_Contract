@@ -17,9 +17,9 @@ describe("TestToken Unit Test", () => {
     });
 
     // it("should fail if Tokens minted to zero address", async() => {    
-    //     const zero = address(0);
+    //     const zero = address(0); 0x000000...
     //     await expect(erc20.mint(zero,100)).to.be.revertedWith("Not functional with zero Address!");
-    // });
+    // }); Not necessary!
 
     describe("Basic", function () {
 

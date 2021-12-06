@@ -15,7 +15,6 @@ contract TestToken is ERC20, Ownable {
     address private _owner;
 
     constructor() ERC20("testToken", "TEST") {
-        _owner = msg.sender;
         balances[msg.sender] = _totalSupply;
     }
 
@@ -43,8 +42,8 @@ contract TestToken is ERC20, Ownable {
     }
 
     function approve(address sender, uint numTokens) public override returns (bool) {
-        allowances[_owner][sender] = numTokens;
-        emit Approval(_owner, sender, numTokens);
+        allowances[msg.sender][sender] = numTokens;
+        emit Approval(msg.sender, sender, numTokens);
         return true;
     }
 
