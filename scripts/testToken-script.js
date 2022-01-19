@@ -7,7 +7,7 @@ async function main() {
   // await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
   const ERC20_test = await ethers.getContractFactory("TestToken");
-  const testTokenAddress = '0xe151152d524ccae54ae9e2572c1168f521bce42c';
+  const testTokenAddress = '0xbebf8DfD34E7c45085AbE414D4b9Ec6E47a8f579';
   const erc20 = new ethers.Contract(testTokenAddress, ERC20_test.interface, accounts[0]);
   // const erc20 = await ERC20_test.deploy({
   //   maxFeePerGas : ethers.utils.parseUnits("100", "gwei"),
@@ -32,8 +32,8 @@ async function main() {
   });  // ethers.utils.parseEther("10")
   minting.wait();
 
-  // const newsupply = await erc20.totalSupply();
-  // console.log("The new total supply of tokens is: ", newsupply.toString());
+  const newsupply = await erc20.totalSupply();
+  console.log("The new total supply of tokens is: ", newsupply.toString());
 
   // const balance = await erc20.balanceOf("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
   // console.log("Balance of Address 1 = ", balance.toString());
@@ -41,12 +41,12 @@ async function main() {
   // const balance2 = await erc20.balanceOf("0x70997970C51812dc3A010C7d01b50e0d17dc79C8");
   // console.log("Balance of Address 2 = ", balance2.toString());
 
-  // const transfer1 = await erc20.transferFrom("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", 120, {
-  //   maxFeePerGas : ethers.utils.parseUnits("104", "gwei"),
-  //   maxPriorityFeePerGas : ethers.utils.parseUnits("10", "gwei")
-  // });
-  // console.log("Transfer called...")
-  // console.log("Transfer : ", transfer1);
+  const transfer1 = await erc20.transferFrom("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", 12000, {
+    maxFeePerGas : ethers.utils.parseUnits("104", "gwei"),
+    maxPriorityFeePerGas : ethers.utils.parseUnits("10", "gwei")
+  });
+  console.log("Transfer called...")
+  console.log("Transfer : ", transfer1);
 
   // const newbalance = await erc20.balanceOf("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
   // console.log("New Balance of Address 1 = ", newbalance.toString());

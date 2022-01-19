@@ -10,12 +10,10 @@ contract TestToken is ERC20, Ownable {
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allowances;
 
-    // uint256 _totalSupply = 100000 * (10**18);
-    uint256 _totalSupply = 100000;
+    uint256 _totalSupply = 0;
     address private _owner;
 
     constructor() ERC20("testToken", "TEST") {
-        balances[msg.sender] = _totalSupply;
     }
 
     function mint(address account, uint256 amount) onlyOwner public {
@@ -42,8 +40,8 @@ contract TestToken is ERC20, Ownable {
     }
 
     function approve(address sender, uint numTokens) public override returns (bool) {
-        allowances[msg.sender][sender] = numTokens;
-        emit Approval(msg.sender, sender, numTokens);
+        allowances[msg.sender][sender] = numTokens; //sender is spender
+        emit Approval(msg.sender, sender, numTokens); //sender is spender
         return true;
     }
 

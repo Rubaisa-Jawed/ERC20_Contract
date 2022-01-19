@@ -14,16 +14,20 @@ describe("TestToken Unit Test", () => {
         erc20TestToken = await ethers.getContractFactory("TestToken");
         [addr0, addr1, addr2] = await ethers.getSigners();
         erc20 = await erc20TestToken.deploy();
+
+        //mint function is called before each test scenrio
+        erc20.mint(addr0.address, 1000);
     });
 
     // it("should fail if Tokens minted to zero address", async() => {    
-    //     const zero = address(0); 0x000000...
+    //     const zero = address(0); 0x000000... (Need to write in the zero address hex)
     //     await expect(erc20.mint(zero,100)).to.be.revertedWith("Not functional with zero Address!");
-    // }); Not necessary!
+    // }); This test is not necessary! 
 
     describe("Basic", function () {
 
         it("should assign total supply of tokens to the addr0", async function () {
+            //checking total supply of tokens to equal owner (when no transferring has occured)
             const ownerBalance = await erc20.balanceOf(addr0.address);
             expect(await erc20.totalSupply()).to.equal(ownerBalance);
         });
@@ -33,11 +37,7 @@ describe("TestToken Unit Test", () => {
     describe("Approval", function () {
 
         it("should approve a set number of tokens for an address", async function () {
-
-            await erc20.transfer(addr1.address, 200);
-            const addr1Balance = await erc20.balanceOf(addr1.address);
-            expect(addr1Balance).to.equal(200);
-
+            //address 1 will now be able to transfer 200 tokens from address 0 to any other address
             await erc20.approve(addr1.address, 200);
 
             await erc20.connect(addr1).transferFrom(addr0.address, addr2.address, 100);
@@ -88,15 +88,19 @@ describe("TestToken Unit Test", () => {
         });
 
         it("should emit a Transfer event at successful transfer", async function () {
+            //Checking if Transfer event is emitted
             await expect(erc20.transfer(addr1.address, 100)).to.emit(erc20, 'Transfer').withArgs(addr0.address, addr1.address, 100);
         });
 
         it("should update balance after transfer", async function () {
+            //storing initial balance of owner in a variable
             const initialOwnerBal = await erc20.balanceOf(addr0.address);
 
+            //transferring tokens
             await erc20.transfer(addr1.address, 100);
             await erc20.transfer(addr2.address, 200);
 
+            //checking balances after transfer
             const finalOwnerBalance = await erc20.balanceOf(addr0.address);
             expect(finalOwnerBalance).to.equal(initialOwnerBal - 300);
 
