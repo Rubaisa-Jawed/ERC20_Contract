@@ -1,4 +1,4 @@
-# Basic Hardhat Project
+# ERC20 Contract
 
 <li>Creation of simple ERC20 smart contract through Hardhat
 <li>Creation of scripts for deploying contract on Hardhat's local blockchain.
